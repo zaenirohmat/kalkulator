@@ -2,85 +2,103 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kalkulator Keren</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Kalkulator iPhone Landscape</title>
     <style>
         body {
-            font-family: 'Poppins', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
-            color: white;
+            background: black;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
         }
         .calculator {
-            background: rgba(255, 255, 255, 0.1);
+            width: 600px;
+            background: #222;
+            border-radius: 25px;
             padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
             text-align: center;
-            backdrop-filter: blur(10px);
         }
         .display {
             width: 100%;
-            height: 60px;
-            text-align: right;
-            font-size: 2em;
-            margin-bottom: 15px;
-            padding: 10px;
-            border: none;
-            background: rgba(255, 255, 255, 0.2);
+            height: 100px;
+            background: black;
             color: white;
-            border-radius: 10px;
+            text-align: right;
+            font-size: 3em;
+            border: none;
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 15px;
+            outline: none;
         }
         .buttons {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 12px;
         }
         button {
-            padding: 20px;
-            font-size: 1.5em;
-            cursor: pointer;
+            width: 75px;
+            height: 75px;
+            font-size: 1.8em;
             border: none;
-            border-radius: 10px;
-            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            background: #333;
             color: white;
-            transition: 0.3s;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        button:hover {
-            background: rgba(255, 255, 255, 0.4);
+        .btn-orange { background: #ff9500; color: white; }
+        .btn-gray { background: #a5a5a5; color: black; }
+        .btn-zero {
+            grid-column: span 2;
+            width: 100%;
+            border-radius: 40px;
+            text-align: left;
+            padding-left: 30px;
         }
-        .equal {
-            background: #28a745;
-        }
-        .clear {
-            background: #dc3545;
-        }
+        button:active { transform: scale(0.9); }
     </style>
 </head>
 <body>
     <div class="calculator">
         <input type="text" class="display" id="display" disabled>
         <div class="buttons">
-            <button onclick="clearDisplay()" class="clear">C</button>
-            <button onclick="appendValue('/')">/</button>
-            <button onclick="appendValue('*')">*</button>
-            <button onclick="appendValue('-')">-</button>
+            <button class="btn-gray" onclick="clearDisplay()">C</button>
+            <button class="btn-gray" onclick="toggleSign()">±</button>
+            <button class="btn-gray" onclick="appendValue('%')">%</button>
+            <button class="btn-gray" onclick="appendValue('(')">(</button>
+            <button class="btn-gray" onclick="appendValue(')')">)</button>
+            <button class="btn-orange" onclick="appendValue('/')">÷</button>
             <button onclick="appendValue('7')">7</button>
             <button onclick="appendValue('8')">8</button>
             <button onclick="appendValue('9')">9</button>
-            <button onclick="appendValue('+')">+</button>
+            <button onclick="appendValue('sqrt(')">√</button>
+            <button onclick="appendValue('^')">xʸ</button>
+            <button class="btn-orange" onclick="appendValue('*')">×</button>
             <button onclick="appendValue('4')">4</button>
             <button onclick="appendValue('5')">5</button>
             <button onclick="appendValue('6')">6</button>
+            <button onclick="appendValue('log(')">log</button>
+            <button onclick="appendValue('ln(')">ln</button>
+            <button class="btn-orange" onclick="appendValue('-')">−</button>
             <button onclick="appendValue('1')">1</button>
             <button onclick="appendValue('2')">2</button>
             <button onclick="appendValue('3')">3</button>
-            <button onclick="appendValue('0')">0</button>
+            <button onclick="appendValue('sin(')">sin</button>
+            <button onclick="appendValue('cos(')">cos</button>
+            <button class="btn-orange" onclick="appendValue('+')">+</button>
+            <button class="btn-zero" onclick="appendValue('0')">0</button>
             <button onclick="appendValue('.')">.</button>
-            <button onclick="calculate()" class="equal">=</button>
+            <button onclick="appendValue('tan(')">tan</button>
+            <button onclick="appendValue('pi')">π</button>
+            <button class="btn-orange" onclick="calculate()">=</button>
         </div>
     </div>
     <script>
@@ -90,9 +108,23 @@
         function clearDisplay() {
             document.getElementById('display').value = '';
         }
+        function toggleSign() {
+            let display = document.getElementById('display');
+            if (display.value) {
+                display.value = display.value.startsWith('-') ? display.value.slice(1) : '-' + display.value;
+            }
+        }
         function calculate() {
             try {
-                document.getElementById('display').value = eval(document.getElementById('display').value);
+                let expression = document.getElementById('display').value;
+                expression = expression.replace(/sqrt\(/g, 'Math.sqrt(');
+                expression = expression.replace(/log\(/g, 'Math.log10(');
+                expression = expression.replace(/ln\(/g, 'Math.log(');
+                expression = expression.replace(/sin\(/g, 'Math.sin(');
+                expression = expression.replace(/cos\(/g, 'Math.cos(');
+                expression = expression.replace(/tan\(/g, 'Math.tan(');
+                expression = expression.replace(/pi/g, 'Math.PI');
+                document.getElementById('display').value = eval(expression);
             } catch (e) {
                 alert('Input tidak valid');
             }
